@@ -1,4 +1,4 @@
-// Adventure.cpp : Defines the entry point for the console application.
+// Main.cpp : Defines the entry point for the console application.
 //
 
 #include "stdafx.h"
@@ -29,7 +29,7 @@ void registerControls(Core* core, Skeleton* frame) {
 }
 
 int main(int arg, char** argv) {
-	Skeleton frame(800, 600, "Adventure Demo");
+	Skeleton frame(800, 600, "3D Demo");
 	Core core(&frame);
 	
 	frame.addRunFunc(std::bind(&Core::update, core));
