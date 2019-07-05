@@ -18,6 +18,10 @@ public:
 	void nup();
 	void nright();
 	void ndown();
+	void front();
+	void nfront();
+	void back();
+	void nback();
 private:
 	Skeleton* frame;
 
@@ -27,6 +31,10 @@ private:
 	std::vector<Actor*> actors;
 	std::vector<int> controlled;
 
+	int* pixels;
+	int sw, sh;
+
+	int screen, screenTexture;
 
 	
 };

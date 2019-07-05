@@ -23,15 +23,23 @@ public:
 	
 	void move();
 	void setSprite(int index);
+	void setSprite(int* pixels, int w, int h);
+
+
+
 	int getSprite();
+	int* getPixels();
 
 	pos getPos();
+	pos getDim();
 private:
 	int sprite = -1;
 
 	bool movevectors[6] = { false, false, false, false, false, false };
 
-	int x = 0, y = 0, z = 0;
+	int* pixels;
+
+	int x = 0, y = 0, z = 0, w = 0, h = 0;
 	double phi = 0;
 	double theta = PI / 2;
 	int speed = 1;

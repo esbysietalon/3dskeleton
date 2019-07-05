@@ -40,11 +40,15 @@ class Skeleton {
 public:
 	Skeleton(int w, int h, char* t);
 	~Skeleton();
+
+	intpair getScreenDim();
+
 	int loadMedia(char* filepath);
 
 	int createTexture(int* pixels, int w, int h);
 	int createSprite(int textureindex, int x, int y);
 	bool removeSprite(int spriteindex);
+	bool removeTexture(int textureindex);
 	Sprite* getSprite(int spriteIndex);
 
 	void registerFunction(std::function<void()> func, SDL_EventType type, SDL_Scancode key = SDL_SCANCODE_LANG1);

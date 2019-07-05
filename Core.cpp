@@ -11,37 +11,51 @@ Core::~Core()
 {
 }
 void Core::update() {
+	memset(pixels, 0xFFFFFF, sw * sh * sizeof(int));
 	for (int i = 0; i < actors.size(); i++) {
-		//std::cout << "updating " << i << std::endl;
 		actors.at(i)->move();
-		//actors.at(i).push(move_t::RIGHT, true);
-		//std::cout << "actor " << i << " is at (" << actors.at(i)->getPos().x << ", " << actors.at(i)->getPos().y << ", " << actors.at(i)->getPos().z << ")" << std::endl;
-		
-		frame->getSprite(actors.at(i)->getSprite())->x = actors.at(i)->getPos().x;
-		frame->getSprite(actors.at(i)->getSprite())->y = actors.at(i)->getPos().y;
-		//std::cout << "Sprite " << actors.at(i).getSprite() << " is at (" << frame->getSprite(actors.at(i).getSprite())->x << ", " << frame->getSprite(actors.at(i).getSprite())->y << std::endl;
-		//std::cout << "Actor " << i << " is at (" << actors.at(i).getPos().x << ", " << actors.at(i).getPos().y << std::endl;
+
+		int ax = actors.at(i)->getPos().x;
+		int ay = actors.at(i)->getPos().y;
+
+		int aw = actors.at(i)->getDim().x;
+		int ah = actors.at(i)->getDim().y;
+
+		for (int y = ay; y < ay + ah; y++)
+			for (int x = ax; x < ax + aw; x++)
+				pixels[x + y * sw] = actors.at(i)->getPixels()[(x-ax) + (y-ay) * aw];
 	}
+	frame->removeSprite(screen);
+	frame->removeTexture(screenTexture);
+	screenTexture = frame->createTexture(pixels, sw, sh);
+	screen = frame->createSprite(screenTexture, 0, 0);
 }
 
 void Core::init() {
-	//Actor* player = new Actor(200, 200, 0);
+
+	//player generation
 	actors.emplace_back(new Actor(200, 200, 0));
 	int player = actors.size() - 1;
-
-	int* pixels = new int[100 * 100];
-	for (int i = 0; i < 100 * 100; i++) {
-		pixels[i] = 0x2222ff;
-	}
-	int playerTexture = frame->createTexture(pixels, 100, 100);
-	int playerSprite = frame->createSprite(playerTexture, actors.at(player)->getPos().x, actors.at(player)->getPos().y);
-	sprites.emplace_back(playerSprite);
-	actors.at(player)->setSprite(playerSprite);
 	
-	std::function<void()> tick = std::bind(&Core::update, *this);
-	frame->addRunFunc(tick);
+	int* playerTexture = new int[100 * 100];
+	for (int i = 0; i < 100 * 100; i++) {
+		playerTexture[i] = 0x2222FF;
+	}
 
+	actors.at(player)->setSprite(playerTexture, 100, 100);
 	registerControls(player);
+	//end
+
+	sw = frame->getScreenDim().x;
+	sh = frame->getScreenDim().y;
+	pixels = new int[sw * sh];
+
+	memset(pixels, 0x000000, sw * sh * sizeof(int));
+
+	screenTexture = frame->createTexture(pixels, sw, sh);
+	screen = frame->createSprite(screenTexture, 0, 0);
+	
+
 }
 
 
@@ -85,7 +99,26 @@ void Core::ndown() {
 		actors.at(controlled.at(i))->push(move_t::DOWN, false);
 	}
 }
-
+void Core::front() {
+	for (int i = 0; i < controlled.size(); i++) {
+		actors.at(controlled.at(i))->push(move_t::FRONT, true);
+	}
+}
+void Core::nfront() {
+	for (int i = 0; i < controlled.size(); i++) {
+		actors.at(controlled.at(i))->push(move_t::FRONT, false);
+	}
+}
+void Core::back() {
+	for (int i = 0; i < controlled.size(); i++) {
+		actors.at(controlled.at(i))->push(move_t::BACK, true);
+	}
+}
+void Core::nback() {
+	for (int i = 0; i < controlled.size(); i++) {
+		actors.at(controlled.at(i))->push(move_t::BACK, false);
+	}
+}
 
 void Core::registerControls(int player)
 {

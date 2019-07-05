@@ -27,6 +27,14 @@ Skeleton::~Skeleton() {
 	std::cout << "Shutdown successful.." << std::endl;
 }
 
+intpair Skeleton::getScreenDim()
+{
+	intpair dim;
+	dim.x = screenWidth;
+	dim.y = screenHeight;
+	return dim;
+}
+
 bool Skeleton::init() {
 	bool success = true;
 
@@ -114,6 +122,15 @@ int Skeleton::createTexture(int* pixels, int w, int h) {
 	skin->w = w;
 	skin->h = h;
 	return addSkin(skin);
+}
+
+bool Skeleton::removeTexture(int textureindex) {
+	if (skinMap.count(textureindex) > 0) {
+		SDL_DestroyTexture(skinMap[textureindex]->texture);
+		skinMap.erase(textureindex);
+		return true;
+	}
+	return false;
 }
 
 int Skeleton::createSprite(int textureindex, int x, int y)

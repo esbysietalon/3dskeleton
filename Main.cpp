@@ -11,21 +11,25 @@ void registerControls(Core* core, Skeleton* frame) {
 	std::function<void()> r = std::bind(&Core::right, *core);
 	std::function<void()> u = std::bind(&Core::up, *core);
 	std::function<void()> d = std::bind(&Core::down, *core);
+	std::function<void()> f = std::bind(&Core::front, *core);
+	std::function<void()> b = std::bind(&Core::back, *core);
 
 	std::function<void()> nl = std::bind(&Core::nleft, *core);
 	std::function<void()> nr = std::bind(&Core::nright, *core);
 	std::function<void()> nu = std::bind(&Core::nup, *core);
 	std::function<void()> nd = std::bind(&Core::ndown, *core);
+	std::function<void()> nf = std::bind(&Core::nfront, *core);
+	std::function<void()> nb = std::bind(&Core::nback, *core);
 
 	frame->registerFunction(l, SDL_KEYDOWN, SDL_SCANCODE_A);
 	frame->registerFunction(r, SDL_KEYDOWN, SDL_SCANCODE_D);
-	frame->registerFunction(u, SDL_KEYDOWN, SDL_SCANCODE_W);
-	frame->registerFunction(d, SDL_KEYDOWN, SDL_SCANCODE_S);
+	frame->registerFunction(f, SDL_KEYDOWN, SDL_SCANCODE_W);
+	frame->registerFunction(b, SDL_KEYDOWN, SDL_SCANCODE_S);
 
 	frame->registerFunction(nl, SDL_KEYUP, SDL_SCANCODE_A);
 	frame->registerFunction(nr, SDL_KEYUP, SDL_SCANCODE_D);
-	frame->registerFunction(nu, SDL_KEYUP, SDL_SCANCODE_W);
-	frame->registerFunction(nd, SDL_KEYUP, SDL_SCANCODE_S);
+	frame->registerFunction(nf, SDL_KEYUP, SDL_SCANCODE_W);
+	frame->registerFunction(nb, SDL_KEYUP, SDL_SCANCODE_S);
 }
 
 int main(int arg, char** argv) {
