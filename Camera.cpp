@@ -5,6 +5,7 @@ Camera::Camera(int width, int height)
 {
 	viewWidth = width;
 	viewHeight = height;
+	//pixels = new int[viewWidth * viewHeight];
 }
 
 Camera::~Camera()
@@ -12,14 +13,18 @@ Camera::~Camera()
 
 }
 
-int * Camera::generateView(Actor * actors)
+
+
+void Camera::generateView(std::vector<Actor*> actors, int* pixels)
 {
-	int* pixels = new int[viewWidth * viewHeight];
 	for(int i = 0; i < viewWidth * viewHeight; i++){
 		pixels[i] = 0;
 	}
+	for (int i = 0; i < actors.size(); i++) {
+		pos aPos = actors.at(i)->getPos();
+		//int dist = getCamDist(aPos);
 
-	return nullptr;
+	}
 }
 
 void Camera::setPosition(int x, int y, int z)

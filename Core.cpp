@@ -11,7 +11,8 @@ Core::~Core()
 {
 }
 void Core::update() {
-	memset(pixels, 0xFFFFFF, sw * sh * sizeof(int));
+	camera->generateView(actors, pixels);
+	/*memset(pixels, 0xFFFFFF, sw * sh * sizeof(int));
 	for (int i = 0; i < actors.size(); i++) {
 		actors.at(i)->move();
 
@@ -24,7 +25,7 @@ void Core::update() {
 		for (int y = ay; y < ay + ah; y++)
 			for (int x = ax; x < ax + aw; x++)
 				pixels[x + y * sw] = actors.at(i)->getPixels()[(x-ax) + (y-ay) * aw];
-	}
+	}*/
 	frame->removeSprite(screen);
 	frame->removeTexture(screenTexture);
 	screenTexture = frame->createTexture(pixels, sw, sh);
@@ -32,6 +33,8 @@ void Core::update() {
 }
 
 void Core::init() {
+
+	
 
 	//player generation
 	actors.emplace_back(new Actor(200, 200, 0));
@@ -48,6 +51,7 @@ void Core::init() {
 
 	sw = frame->getScreenDim().x;
 	sh = frame->getScreenDim().y;
+	camera = new Camera(sw, sh);
 	pixels = new int[sw * sh];
 
 	memset(pixels, 0x000000, sw * sh * sizeof(int));

@@ -1,6 +1,7 @@
 #pragma once
 #include "Skeleton.h"
 #include "Actor.h"
+#include "Camera.h"
 
 class Core {
 public:
@@ -24,6 +25,7 @@ public:
 	void nback();
 private:
 	Skeleton* frame;
+	Camera* camera;
 
 	void init();
 
