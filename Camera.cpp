@@ -17,10 +17,10 @@ Camera::~Camera()
 void Camera::move(move_t id) {
 	switch (id) {
 	case move_t::LEFT:
-		x--;
+		theta-=0.01;
 		break;
 	case move_t::RIGHT:
-		x++;
+		theta+=0.01;
 		break;
 	case move_t::FRONT:
 		z++;
@@ -120,16 +120,13 @@ void Camera::generateView(std::vector<Actor*> actors, int* pixels)
 				//std::cout << "left: " << aPos.x << " right: " << aPos.x + aDim.x << " up: " << aPos.y << " down: " << aPos.y + aDim.y << std::endl;
 				if (corrected_x >= aPos.x && corrected_x < aPos.x + aDim.x) {
 					//std::cout << "in x view" << std::endl;
-					if (corrected_y >= aPos.y - aDim.y && corrected_y < aPos.y + aDim.y) {
+					if (corrected_y >= aPos.y && corrected_y < aPos.y + aDim.y) {
 						//std::cout << "corrected_x: " << corrected_x << " corrected_y: " << corrected_y << " in view" << std::endl;
 						//std::cout << (int)(corrected_x - aPos.x) + (int)(corrected_y - aPos.y) * aDim.x << " - " << actors.at(i)->getPixels()[(int)(corrected_x - aPos.x) + (int)(corrected_y - aPos.y) * aDim.x] <<  std::endl;
 						//std::cout << (int)(xrayAng / fov) + (int)(yrayAng / vfov) * viewWidth << std::endl;
 						int screenX = ((xrayAng + fov / 2) / fov) * viewWidth;
 						int screenY = ((yrayAng + vfov / 2) / vfov) * viewHeight;
-						screenX -= viewWidth / 2;
-						if (screenX < 0) {
-							screenX += viewWidth;
-						}
+						
 						//std::cout << "screenX: " << screenX << " screenY: " << screenY << std::endl;
 						pixels[screenX + screenY * viewWidth] = 0xffffff;//actors.at(i)->getPixels()[(int)(corrected_x - aPos.x) + (int)(corrected_y - aPos.y) * aDim.x];
 					}
