@@ -86,6 +86,6 @@ pos Actor::getPos()
 
 pos Actor::getDim()
 {
-	pos dim(w, h, 0);
+	pos dim(w, h, t);
 	return dim;
 }

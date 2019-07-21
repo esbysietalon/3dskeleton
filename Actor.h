@@ -39,7 +39,7 @@ private:
 
 	int* pixels;
 
-	int x = 0, y = 0, z = 0, w = 0, h = 0;
+	int x = 0, y = 0, z = 0, w = 0, h = 0, t = 0;
 	double phi = 0;
 	double theta = PI / 2;
 	int speed = 1;
