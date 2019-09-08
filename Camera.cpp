@@ -16,6 +16,12 @@ Camera::~Camera()
 
 void Camera::move(move_t id) {
 	switch (id) {
+	case move_t::ROTU:
+		phi += PI / 60;
+		break;
+	case move_t::ROTD:
+		phi -= PI / 60;
+		break;
 	case move_t::ROTL:
 		theta += PI / 60;
 		break;
@@ -99,16 +105,26 @@ pos Camera::flatten(pos point) {
 	int ct = c0 - this->z;
 
 
-	float dist = sqrt((at - this->x) * (at - this->x) + (ct - this->z) * (ct - this->z));
+	float dist_theta = sqrt((at - this->x) * (at - this->x) + (ct - this->z) * (ct - this->z));
 	double theta_o = atan2(ct - this->z, at - this->x);
 
 	double theta_n = theta_o - this->theta;
 
 
 	//std::cout << theta_n * 180 / PI << std::endl;
-	double a1 = at - at +  dist * cos(theta_n);
-	double b1 = bt;
-	double c1 = ct - ct +  dist * sin(theta_n);
+	double ar = at - at +  dist_theta * cos(theta_n);
+	double br = bt;
+	double cr = ct - ct +  dist_theta * sin(theta_n);
+
+	float dist_phi = sqrt((bt - this->y) * (bt - this->y) + (ct - this->z) * (ct - this->z));
+	double phi_o = atan2(ct - this->z, bt - this->y);
+
+	double phi_n = phi_o - this->phi;
+
+	double a1 = ar;
+	double b1 = br - br + dist_phi * cos(phi_n);
+	double c1 = cr - cr + dist_phi * sin(phi_n);
+
 
 	if (c1 < this->z) {
 		return pos(0, 0, 2);

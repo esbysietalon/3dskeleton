@@ -14,6 +14,7 @@ public:
 private:
 	float fov, vfov;
 	float theta = 0;
+	float phi = 0;
 	int x, y, z;
 	int focalX, focalY, focalZ;
 	float hang_step, vang_step;

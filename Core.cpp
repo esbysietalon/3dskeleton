@@ -100,6 +100,12 @@ void Core::rotl() {
 void Core::rotr() {
 	camera->move(move_t::ROTR);
 }
+void Core::rotu() {
+	camera->move(move_t::ROTU);
+}
+void Core::rotd() {
+	camera->move(move_t::ROTD);
+}
 void Core::up() {
 	camera->move(move_t::UP);
 }

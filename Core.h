@@ -13,6 +13,8 @@ public:
 
 	void rotr();
 	void rotl();
+	void rotu();
+	void rotd();
 	void left();
 	void up();
 	void right();
