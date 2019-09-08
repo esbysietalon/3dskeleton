@@ -12,12 +12,14 @@ public:
 	void setFov(float fov, float vfov);
 	void move(move_t id);
 private:
-	float theta, phi, fov, vfov;
+	float fov, vfov;
+	float theta;
 	int x, y, z;
+	int focalX, focalY, focalZ;
 	float hang_step, vang_step;
 	int viewWidth, viewHeight;
 	int* pixels;
 	int getCamDist(pos point);
-	float getAng(pos point, char fov_type);
-	bool inView(Actor* actor);
+	bool inView(pos point);
+	pos flatten(pos point);
 };

@@ -47,16 +47,30 @@ void Core::init() {
 	for (int i = 0; i < 100 * 100; i++) {
 		playerTexture[i] = 0x2222FF;
 	}
-
-	actors.at(player)->setSprite(playerTexture, 100, 100);
+	//actors.at(player)->addFramePoint(pos(-10, -10, -10));
+	//actors.at(player)->addFramePoint(pos(10, 10, 10));
+	//actors.at(player)->addFramePoint(pos(10, -10, -10));
+	//actors.at(player)->addFramePoint(pos(10, -10, 10));
+	//actors.at(player)->addFramePoint(pos(10, 10, -10));
+	//actors.at(player)->addFramePoint(pos(-10, -10, 10));
+	for (int k = 0; k < 100; k++) {
+		for (int i = 0; i < 80; i++) {
+			for (int j = 0; j < 60; j++) {
+				if(i == 0 || j == 0 || i == 79 || j == 59)
+					actors.at(player)->addFramePoint(pos(i * 10, j * 10, 100 + k * 20));
+			}
+		}
+	}
+	//actors.at(player)->addFramePoint(pos(-10, 10, 10));
+	//actors.at(player)->setSprite(playerTexture, 100, 100);
 	registerControls(player);
 	//end
 
 	sw = frame->getScreenDim().x;
 	sh = frame->getScreenDim().y;
 	camera = new Camera(sw, sh);
-	camera->setFov(PI / 2, PI);
-	camera->setPosition(0, 0, -100);
+	camera->setFov(PI / 2, PI / 2);
+	camera->setPosition(0, 0, -1);
 	camera->setRotation(PI / 2, 0);
 	pixels = new int[sw * sh];
 

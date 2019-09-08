@@ -1,7 +1,7 @@
 #pragma once
 
 #include <math.h>
-
+#include <vector>
 #define PI 3.14159
 struct pos {
 	int x, y, z;
@@ -10,6 +10,13 @@ struct pos {
 		y = b;
 		z = c;
 	}
+	pos operator+(const pos& a) const
+	{
+		return pos(a.x + x, a.y + y, a.z + z);
+	}
+};
+struct frame {
+	std::vector<pos> wf;
 };
 enum move_t { LEFT, RIGHT, UP, DOWN, FRONT, BACK };
 
@@ -25,13 +32,13 @@ public:
 	void setSprite(int index);
 	void setSprite(int* pixels, int w, int h);
 
-
+	frame getFrame();
+	void addFramePoint(pos xyz);
 
 	int getSprite();
 	int* getPixels();
 
 	pos getPos();
-	pos getDim();
 private:
 	int sprite = -1;
 
@@ -39,8 +46,10 @@ private:
 
 	int* pixels;
 
-	int x = 0, y = 0, z = 0, w = 0, h = 0, t = 0;
+	int x = 0, y = 0, z = 0;
 	double phi = 0;
 	double theta = PI / 2;
 	int speed = 1;
+	
+	frame skeleton;
 };

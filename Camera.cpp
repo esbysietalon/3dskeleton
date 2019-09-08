@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Camera.h"
 #include <iostream>
-
+#define FOCAL_DIST 2
 Camera::Camera(int width, int height)
 {
 	viewWidth = width;
@@ -17,10 +17,10 @@ Camera::~Camera()
 void Camera::move(move_t id) {
 	switch (id) {
 	case move_t::LEFT:
-		theta-=0.01;
+		theta -= PI/12;
 		break;
 	case move_t::RIGHT:
-		theta+=0.01;
+		theta += PI/12;
 		break;
 	case move_t::FRONT:
 		z++;
@@ -38,18 +38,6 @@ void Camera::move(move_t id) {
 }
 int Camera::getCamDist(pos xyz) {
 	return (xyz.x - x) * (xyz.x - x) + (xyz.y - y) * (xyz.y - y) + (xyz.z - z) * (xyz.z - z);
-}
-
-float Camera::getAng(pos xyz, char fov_type) {
-	switch (fov_type) {
-	case 't':
-		return atan2(xyz.z - z, xyz.x - x);
-	case 'p':
-		return atan2(xyz.y - y, xyz.z - z);
-	default:
-		return 0;
-	}
-	
 }
 
 int max(pos abc) {
@@ -71,16 +59,43 @@ int max(pos abc) {
 	}
 }
 
-bool Camera::inView(Actor* actor) {
-	int sqdist = getCamDist(actor->getPos());
-	if (sqdist == 0)
-		return false;
+bool Camera::inView(pos point) {
+	pos flatpoint = flatten(point);
+	return ((flatpoint.x >= 0 && flatpoint.x < this->viewWidth) && (flatpoint.y >= 0 && flatpoint.y < this->viewHeight) && (this->z < point.z));
+}
 
-	float xzang = getAng(actor->getPos(), 't');
-	float yzang = getAng(actor->getPos(), 'p');
+int getSign(float num) {
+	if (num == 0)
+		return 0;
+	return abs(num) / num;
+}
+float max(float a, float b) {
+	return (a > b) ? a : b;
+}
+float min(float a, float b) {
+	return (a < b) ? a : b;
+}
+float nozero(float a) {
+	return (a == 0) ? 1 : a;
+}
+pos Camera::flatten(pos point) {	
+	int a1 = point.x;
+	int b1 = point.y;
+	int c1 = point.z;
 	
-	float visAng = sqrt(max(actor->getDim())) / sqrt(sqdist);
-	return (abs(xzang - theta) - visAng / 2 < fov) && (abs(yzang - phi) - visAng / 2 < vfov);
+	
+	int x1 = this->viewWidth;
+	int y1 = this->viewHeight;
+	int cx = this->x + this->viewWidth / 2;
+	int cy = this->y + this->viewHeight / 2;
+
+	int a2 = a1 + (cx - a1) * min(c1, c1 - this->z) / (double) (c1);
+	int b2 = b1 + (cy - b1) * min(c1, c1 - this->z) / (double) (c1);
+
+	//a2 = a1 + (cx - a1) / ((double) nozero(point.z - this->z));
+	//b2 = b1 + (cx - b1) / ((double) nozero(point.z - this->z));
+
+	return pos(a2, b2, 0);
 }
 
 void Camera::generateView(std::vector<Actor*> actors, int* pixels)
@@ -90,55 +105,19 @@ void Camera::generateView(std::vector<Actor*> actors, int* pixels)
 	}
 	for (int i = 0; i < actors.size(); i++) {
 		pos aPos = actors.at(i)->getPos();
-		pos aDim = actors.at(i)->getDim();
-		/*float xzang = getAng(actors.at(i)->getPos(), 't');
-		float yzang = getAng(actors.at(i)->getPos(), 'p');
-		std::cout << "xzang: " << xzang << " yzang: " << yzang << std::endl;*/
-		//std::cout << aPos.x << " " << aPos.y << " " << aPos.z << std::endl;
-		if (!inView(actors.at(i))) {
-			//std::cout << "not in view" << std::endl;
-			continue;
-		}
-		//std::cout << "in view" << std::endl;
-		float dist = sqrt(getCamDist(aPos));
-		float baseCamX = cos(theta) * dist;
-		float baseCamY = cos(phi) * dist;
-		//std::cout << "vang_step: " << vang_step << " hang_step: " << hang_step << std::endl;
-		int llim_x = baseCamX + -1 * cos(-fov / 2) * dist;
-		int rlim_x = baseCamX + cos(fov / 2) * dist;
-		int ulim_y = baseCamY + sin(-vfov / 2) * dist;
-		int dlim_y = baseCamY + sin(vfov / 2) * dist;
-		//std::cout << "llim_x: " << llim_x << " rlim_x: " << rlim_x << " ulim_y: " << ulim_y << " dlim_y: " << dlim_y << std::endl;
-		for (float yrayAng = -vfov / 2; yrayAng < vfov / 2; yrayAng += vang_step) {
-			int corrected_y = baseCamY + sin(yrayAng) * dist;
-			//std::cout << "yrayAng: " << yrayAng << " sin: " << sin(yrayAng) << " corrected_y: " << corrected_y <<  std::endl;
-			for (float xrayAng = -fov / 2; xrayAng < fov / 2; xrayAng += hang_step) {
-				//std::cout << "xrayAng: " << xrayAng << std::endl;
-				int corrected_x = baseCamX + cos(xrayAng) * dist;
-				
-				//std::cout << "corrected_x: " << corrected_x << " corrected_y: " << corrected_y << std::endl;
-				//std::cout << "left: " << aPos.x << " right: " << aPos.x + aDim.x << " up: " << aPos.y << " down: " << aPos.y + aDim.y << std::endl;
-				if (corrected_x >= aPos.x && corrected_x < aPos.x + aDim.x) {
-					//std::cout << "in x view" << std::endl;
-					if (corrected_y >= aPos.y && corrected_y < aPos.y + aDim.y) {
-						//std::cout << "corrected_x: " << corrected_x << " corrected_y: " << corrected_y << " in view" << std::endl;
-						//std::cout << (int)(corrected_x - aPos.x) + (int)(corrected_y - aPos.y) * aDim.x << " - " << actors.at(i)->getPixels()[(int)(corrected_x - aPos.x) + (int)(corrected_y - aPos.y) * aDim.x] <<  std::endl;
-						//std::cout << (int)(xrayAng / fov) + (int)(yrayAng / vfov) * viewWidth << std::endl;
-						int screenX = ((xrayAng + fov / 2) / fov) * viewWidth;
-						int screenY = ((yrayAng + vfov / 2) / vfov) * viewHeight;
-						
-						//std::cout << "screenX: " << screenX << " screenY: " << screenY << std::endl;
-						pixels[screenX + screenY * viewWidth] = 0xffffff;//actors.at(i)->getPixels()[(int)(corrected_x - aPos.x) + (int)(corrected_y - aPos.y) * aDim.x];
-					}
-					else {
-						//std::cout << "corrected_x: " << corrected_x << " corrected_y: " << corrected_y << " not in view" << std::endl;
-					}
-				}
-				else {
-					//std::cout << "corrected_x: " << corrected_x << " corrected_y: " << corrected_y << " not in view" << std::endl;
-				}
-				
+		frame aframe = actors.at(i)->getFrame();
+		for (int j = 0; j < aframe.wf.size(); j++) {
+			pos point = aframe.wf.at(j) + aPos;
+			if (!inView(point)) {
+				continue;
 			}
+			pos flatpoint = flatten(point);
+			int index = flatpoint.x + flatpoint.y * viewWidth;
+			
+			if (index >= 0 && index < viewWidth * viewHeight) {
+				pixels[index] = 0xFF0000;
+			}
+				
 		}
 	}
 }
@@ -152,8 +131,9 @@ void Camera::setPosition(int x, int y, int z)
 
 void Camera::setRotation(float theta, float phi)
 {
-	this->theta = theta;
-	this->phi = phi;
+	this->focalX = x - FOCAL_DIST * cos(theta);
+	this->focalY = y - FOCAL_DIST * sin(phi);
+	this->focalZ = z - FOCAL_DIST * sin(theta);
 }
 
 void Camera::setFov(float fov, float vfov)

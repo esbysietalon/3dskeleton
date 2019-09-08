@@ -60,8 +60,6 @@ void Actor::setSprite(int index)
 
 void Actor::setSprite(int * texture, int w, int h)
 {
-	this->w = w;
-	this->h = h;
 	pixels = new int[w * h];
 	for (int i = 0; i < w * h; i++) {
 		//std::cout << texture[i] << " " << std::endl;
@@ -84,8 +82,9 @@ pos Actor::getPos()
 	return pos(x, y, z);
 }
 
-pos Actor::getDim()
-{
-	pos dim(w, h, t);
-	return dim;
+frame Actor::getFrame() {
+	return skeleton;
+}
+void Actor::addFramePoint(pos xyz) {
+	skeleton.wf.emplace_back(xyz);
 }
