@@ -72,7 +72,7 @@ bool Camera::inView(pos point) {
 	if (flatpoint.z > 0)
 		return false;
 	//return true;
-	return ((flatpoint.x >= 0 && flatpoint.x < this->viewWidth) && (flatpoint.y >= 0 && flatpoint.y < this->viewHeight) && (this->z < point.z));
+	return ((flatpoint.x >= 0 && flatpoint.x < this->viewWidth) && (flatpoint.y >= 0 && flatpoint.y < this->viewHeight));
 }
 
 int getSign(float num) {
@@ -98,20 +98,17 @@ pos Camera::flatten(pos point) {
 	int bt = b0 - this->y;
 	int ct = c0 - this->z;
 
-	if (ct < this->z) {
-		return pos(0, 0, 1);
-	}
 
-	float dist = sqrt((at - this->x) * (at - this->x) + (bt - this->y) * (bt - this->y) + (ct - this->z) * (ct - this->z));
+	float dist = sqrt((at - this->x) * (at - this->x) + (ct - this->z) * (ct - this->z));
 	double theta_o = atan2(ct - this->z, at - this->x);
 
 	double theta_n = theta_o - this->theta;
 
 
 	//std::cout << theta_n * 180 / PI << std::endl;
-	double a1 = this->x + dist * cos(theta_n);
+	double a1 = at - at +  dist * cos(theta_n);
 	double b1 = bt;
-	double c1 = this->z + dist * sin(theta_n);
+	double c1 = ct - ct +  dist * sin(theta_n);
 
 	if (c1 < this->z) {
 		return pos(0, 0, 2);
@@ -124,8 +121,8 @@ pos Camera::flatten(pos point) {
 	int cx = this->viewWidth / 2;
 	int cy = this->viewHeight / 2;
 
-	int a2 = a1 + (cx - a1) * min(c1, c1 - this->z) / (double) (c1) * 0.7;
-	int b2 = b1 + (cy - b1) * min(c1, c1 - this->z) / (double) (c1) * 0.7;
+	int a2 = a1 + (cx - a1) * max(1, min(c1, c1 - this->z)) / (double) (c1) * 0.95;
+	int b2 = b1 + (cy - b1) * max(1, min(c1, c1 - this->z)) / (double) (c1) * 0.95;
 
 	//a2 = a1 + (cx - a1) / ((double) nozero(point.z - this->z));
 	//b2 = b1 + (cx - b1) / ((double) nozero(point.z - this->z));
@@ -150,7 +147,7 @@ void Camera::generateView(std::vector<Actor*> actors, int* pixels)
 			int index = flatpoint.x + flatpoint.y * viewWidth;
 			
 			if (index >= 0 && index < viewWidth * viewHeight) {
-				pixels[index] = 0xFF0000;
+				pixels[index] = 0xFFFFFF;
 			}
 				
 		}
@@ -166,9 +163,7 @@ void Camera::setPosition(int x, int y, int z)
 
 void Camera::setRotation(float theta, float phi)
 {
-	this->focalX = x - FOCAL_DIST * cos(theta);
-	this->focalY = y - FOCAL_DIST * sin(phi);
-	this->focalZ = z - FOCAL_DIST * sin(theta);
+	
 }
 
 void Camera::setFov(float fov, float vfov)
