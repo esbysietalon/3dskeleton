@@ -13,7 +13,7 @@ public:
 	void move(move_t id);
 private:
 	float fov, vfov;
-	float theta;
+	float theta = 0;
 	int x, y, z;
 	int focalX, focalY, focalZ;
 	float hang_step, vang_step;

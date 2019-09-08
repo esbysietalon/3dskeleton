@@ -11,6 +11,8 @@ public:
 	void update();
 	void registerControls(int aci);
 
+	void rotr();
+	void rotl();
 	void left();
 	void up();
 	void right();

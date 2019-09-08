@@ -16,17 +16,25 @@ Camera::~Camera()
 
 void Camera::move(move_t id) {
 	switch (id) {
+	case move_t::ROTL:
+		theta -= PI / 60;
+		break;
+	case move_t::ROTR:
+		theta += PI / 60;
+		break;
 	case move_t::LEFT:
-		theta -= PI/12;
+		x-=5;
+		//theta -= PI/12;
 		break;
 	case move_t::RIGHT:
-		theta += PI/12;
+		x+=10;
+		//theta += PI/12;
 		break;
 	case move_t::FRONT:
-		z++;
+		z+=10;
 		break;
 	case move_t::BACK:
-		z--;
+		z-=100;
 		break;
 	case move_t::UP:
 		y--;
@@ -61,6 +69,9 @@ int max(pos abc) {
 
 bool Camera::inView(pos point) {
 	pos flatpoint = flatten(point);
+	if (flatpoint.z == 69)
+		return false;
+	//return true;
 	return ((flatpoint.x >= 0 && flatpoint.x < this->viewWidth) && (flatpoint.y >= 0 && flatpoint.y < this->viewHeight) && (this->z < point.z));
 }
 
@@ -79,18 +90,39 @@ float nozero(float a) {
 	return (a == 0) ? 1 : a;
 }
 pos Camera::flatten(pos point) {	
-	int a1 = point.x;
-	int b1 = point.y;
-	int c1 = point.z;
+	int a0 = point.x;
+	int b0 = point.y;
+	int c0 = point.z;
 	
+	float dist = sqrt((point.x - this->x) * (point.x - this->x) + (point.y - this->y) * (point.y - this->y) + (point.z - this->z) * (point.z - this->z));
+	double theta_o = atan2(point.z - this->z, point.x - this->x);
+
+	double theta_n = theta_o+this->theta;
 	
+	//std::cout << theta_n * 180 / PI << std::endl;
+	int ar = this->x + dist * cos(theta_n);
+	int br = b0;
+	int cr = this->z + dist * sin(theta_n);
+
+	if (cr < this->z) {
+		return pos(0, 0, 69);
+	}
+	
+	int a1 = ar + this->x;
+	int b1 = br + this->y;
+	int c1 = cr + this->z;
+
+	if (c1 < this->z) {
+		return pos(0, 0, 69);
+	}
+
 	int x1 = this->viewWidth;
 	int y1 = this->viewHeight;
-	int cx = this->x + this->viewWidth / 2;
-	int cy = this->y + this->viewHeight / 2;
+	int cx = this->viewWidth / 2;
+	int cy = this->viewHeight / 2;
 
-	int a2 = a1 + (cx - a1) * min(c1, c1 - this->z) / (double) (c1);
-	int b2 = b1 + (cy - b1) * min(c1, c1 - this->z) / (double) (c1);
+	int a2 = a1 + (cx - a1) * min(c1, c1 - this->z) / (double) (c1) * 0.75;
+	int b2 = b1 + (cy - b1) * min(c1, c1 - this->z) / (double) (c1) * 0.75;
 
 	//a2 = a1 + (cx - a1) / ((double) nozero(point.z - this->z));
 	//b2 = b1 + (cx - b1) / ((double) nozero(point.z - this->z));

@@ -18,7 +18,7 @@ struct pos {
 struct frame {
 	std::vector<pos> wf;
 };
-enum move_t { LEFT, RIGHT, UP, DOWN, FRONT, BACK };
+enum move_t { LEFT, RIGHT, UP, DOWN, FRONT, BACK, ROTL, ROTR };
 
 class Actor {
 public:

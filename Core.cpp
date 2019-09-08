@@ -57,7 +57,7 @@ void Core::init() {
 		for (int i = 0; i < 80; i++) {
 			for (int j = 0; j < 60; j++) {
 				if(i == 0 || j == 0 || i == 79 || j == 59)
-					actors.at(player)->addFramePoint(pos(i * 10, j * 10, 100 + k * 20));
+					actors.at(player)->addFramePoint(pos(i * 20, j * 20, 100 + k * 40));
 			}
 		}
 	}
@@ -93,6 +93,12 @@ void Core::front() {
 }
 void Core::back() {
 	camera->move(move_t::BACK);
+}
+void Core::rotl() {
+	camera->move(move_t::ROTL);
+}
+void Core::rotr() {
+	camera->move(move_t::ROTR);
 }
 /*
 void Core::left() {
