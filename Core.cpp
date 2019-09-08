@@ -100,6 +100,12 @@ void Core::rotl() {
 void Core::rotr() {
 	camera->move(move_t::ROTR);
 }
+void Core::up() {
+	camera->move(move_t::UP);
+}
+void Core::down() {
+	camera->move(move_t::DOWN);
+}
 /*
 void Core::left() {
 	for (int i = 0; i < controlled.size(); i++) {
@@ -111,16 +117,7 @@ void Core::right() {
 		actors.at(controlled.at(i))->push(move_t::RIGHT, true);
 	}
 }
-void Core::up() {
-	for (int i = 0; i < controlled.size(); i++) {
-		actors.at(controlled.at(i))->push(move_t::UP, true);
-	}
-}
-void Core::down() {
-	for (int i = 0; i < controlled.size(); i++) {
-		actors.at(controlled.at(i))->push(move_t::DOWN, true);
-	}
-}
+
 void Core::nleft() {
 	for (int i = 0; i < controlled.size(); i++) {
 		actors.at(controlled.at(i))->push(move_t::LEFT, false);

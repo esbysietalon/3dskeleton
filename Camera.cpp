@@ -17,13 +17,13 @@ Camera::~Camera()
 void Camera::move(move_t id) {
 	switch (id) {
 	case move_t::ROTL:
-		theta -= PI / 60;
-		break;
-	case move_t::ROTR:
 		theta += PI / 60;
 		break;
+	case move_t::ROTR:
+		theta -= PI / 60;
+		break;
 	case move_t::LEFT:
-		x-=5;
+		x-=10;
 		//theta -= PI/12;
 		break;
 	case move_t::RIGHT:
@@ -34,13 +34,13 @@ void Camera::move(move_t id) {
 		z+=10;
 		break;
 	case move_t::BACK:
-		z-=100;
+		z-=10;
 		break;
 	case move_t::UP:
-		y--;
+		y-=10;
 		break;
 	case move_t::DOWN:
-		y++;
+		y+=10;
 		break;
 	}
 }
@@ -69,7 +69,7 @@ int max(pos abc) {
 
 bool Camera::inView(pos point) {
 	pos flatpoint = flatten(point);
-	if (flatpoint.z == 69)
+	if (flatpoint.z > 0)
 		return false;
 	//return true;
 	return ((flatpoint.x >= 0 && flatpoint.x < this->viewWidth) && (flatpoint.y >= 0 && flatpoint.y < this->viewHeight) && (this->z < point.z));
@@ -94,35 +94,38 @@ pos Camera::flatten(pos point) {
 	int b0 = point.y;
 	int c0 = point.z;
 	
-	float dist = sqrt((point.x - this->x) * (point.x - this->x) + (point.y - this->y) * (point.y - this->y) + (point.z - this->z) * (point.z - this->z));
-	double theta_o = atan2(point.z - this->z, point.x - this->x);
+	int at = a0 - this->x;
+	int bt = b0 - this->y;
+	int ct = c0 - this->z;
 
-	double theta_n = theta_o+this->theta;
-	
-	//std::cout << theta_n * 180 / PI << std::endl;
-	int ar = this->x + dist * cos(theta_n);
-	int br = b0;
-	int cr = this->z + dist * sin(theta_n);
-
-	if (cr < this->z) {
-		return pos(0, 0, 69);
+	if (ct < this->z) {
+		return pos(0, 0, 1);
 	}
-	
-	int a1 = ar + this->x;
-	int b1 = br + this->y;
-	int c1 = cr + this->z;
+
+	float dist = sqrt((at - this->x) * (at - this->x) + (bt - this->y) * (bt - this->y) + (ct - this->z) * (ct - this->z));
+	double theta_o = atan2(ct - this->z, at - this->x);
+
+	double theta_n = theta_o - this->theta;
+
+
+	//std::cout << theta_n * 180 / PI << std::endl;
+	double a1 = this->x + dist * cos(theta_n);
+	double b1 = bt;
+	double c1 = this->z + dist * sin(theta_n);
 
 	if (c1 < this->z) {
-		return pos(0, 0, 69);
+		return pos(0, 0, 2);
 	}
+	
+	
 
 	int x1 = this->viewWidth;
 	int y1 = this->viewHeight;
 	int cx = this->viewWidth / 2;
 	int cy = this->viewHeight / 2;
 
-	int a2 = a1 + (cx - a1) * min(c1, c1 - this->z) / (double) (c1) * 0.75;
-	int b2 = b1 + (cy - b1) * min(c1, c1 - this->z) / (double) (c1) * 0.75;
+	int a2 = a1 + (cx - a1) * min(c1, c1 - this->z) / (double) (c1) * 0.7;
+	int b2 = b1 + (cy - b1) * min(c1, c1 - this->z) / (double) (c1) * 0.7;
 
 	//a2 = a1 + (cx - a1) / ((double) nozero(point.z - this->z));
 	//b2 = b1 + (cx - b1) / ((double) nozero(point.z - this->z));
