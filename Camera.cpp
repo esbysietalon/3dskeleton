@@ -20,8 +20,8 @@ int getSign(float num) {
 }
 void Camera::updateMousePosition(int x, int y) {
 	
-	double theta_n = this->theta + getSign(x - mousex) * PI / 60;
-	double phi_n = this->phi + getSign(y - mousey) * PI / 60;
+	double theta_n = this->theta + getSign(x - mousex) * (PI / 60) * (1 + 10 * abs(mousex - this->viewWidth / 2) / (this->viewWidth / 2));
+	double phi_n = this->phi + getSign(y - mousey) * (PI / 60) * (1 + 10 * abs(mousex - this->viewWidth / 2) / (this->viewWidth / 2));
 	
 	this->mousex = x;
 	this->mousey = y;
