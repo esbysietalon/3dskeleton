@@ -13,16 +13,25 @@ Camera::~Camera()
 {
 
 }
-
+int getSign(float num) {
+	if (num == 0)
+		return 0;
+	return abs(num) / num;
+}
 void Camera::updateMousePosition(int x, int y) {
+	
+	double theta_n = this->theta + getSign(x - mousex) * PI / 60;
+	double phi_n = this->phi + getSign(y - mousey) * PI / 60;
+	
 	this->mousex = x;
 	this->mousey = y;
-
-	double theta_n = PI +  PI * cos(this->mousex / (double) this->viewWidth * PI);
-	double phi_n = PI +  PI * cos(this->mousey / (double) this->viewHeight *  PI);
-
+	
+	//double theta_n = PI +  PI * sin((this->viewWidth / 2 - this->mousex) / (double) (this->viewWidth) * PI);
+	//double phi_n = PI + PI * sin((this->viewHeight / 2 - this->mousey) / (double) (this->viewHeight) *  PI);
+	
 	this->theta = theta_n;
 	this->phi = phi_n;
+
 }
 void Camera::move(move_t id) {
 	switch (id) {
@@ -91,11 +100,22 @@ bool Camera::inView(pos point) {
 	return ((flatpoint.x >= 0 && flatpoint.x < this->viewWidth) && (flatpoint.y >= 0 && flatpoint.y < this->viewHeight));
 }
 
-int getSign(float num) {
-	if (num == 0)
-		return 0;
-	return abs(num) / num;
+
+bool Camera::withinFov(pos point) {
+	int x = point.x;
+	int y = point.y;
+	int z = point.z;
+
+	double theta_p = atan2(this->z - point.z, this->x - point.x);
+	double phi_p = atan2(this->z - point.z, this->y - point.z);
+	
+	//std::cout << theta_p << " " << this->theta << " " << phi_p << " " << this->phi << std::endl;
+	//std::cout << ((abs(theta_p + PI / 2 - (this->theta)) <= PI) && (abs(phi_p + PI / 2 - (this->phi)) <= PI)) << std::endl;
+	return true;
+	//return ((abs(theta_p - (this->theta - PI / 2)) <= PI / 2) && (abs(phi_p - (this->phi - PI / 2)) <= PI / 2));
 }
+
+
 float max(float a, float b) {
 	return (a > b) ? a : b;
 }
@@ -136,8 +156,8 @@ pos Camera::flatten(pos point) {
 	double c1 = cr - cr + dist_phi * sin(phi_n);
 
 
-	if (c1 < this->z) {
-		return pos(0, 0, 2);
+	if (!withinFov(pos(a1, b1, c1))) {
+		return pos(0, 0, 1);
 	}
 	
 	

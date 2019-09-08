@@ -24,5 +24,6 @@ private:
 	int* pixels;
 	int getCamDist(pos point);
 	bool inView(pos point);
+	bool withinFov(pos point);
 	pos flatten(pos point);
 };
