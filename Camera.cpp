@@ -26,8 +26,8 @@ void Camera::updateMousePosition(int x, int y) {
 	this->mousex = x;
 	this->mousey = y;
 	
-	//double theta_n = PI +  PI * sin((this->viewWidth / 2 - this->mousex) / (double) (this->viewWidth) * PI);
-	//double phi_n = PI + PI * sin((this->viewHeight / 2 - this->mousey) / (double) (this->viewHeight) *  PI);
+	theta_n = PI +  PI * sin((this->viewWidth / 2 - this->mousex) / (double) (this->viewWidth) * PI);
+	phi_n = PI + PI * sin((this->viewHeight / 2 - this->mousey) / (double) (this->viewHeight) *  PI);
 	
 	this->theta = theta_n;
 	this->phi = phi_n;
