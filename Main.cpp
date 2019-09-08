@@ -17,6 +17,8 @@ void registerControls(Core* core, Skeleton* frame) {
 	std::function<void()> rotr = std::bind(&Core::rotr, *core);
 	std::function<void()> rotu = std::bind(&Core::rotu, *core);
 	std::function<void()> rotd = std::bind(&Core::rotd, *core);
+	std::function<void()> updateMousePosition = std::bind(&Core::updateMousePosition, *core);
+
 
 	/*std::function<void()> nl = std::bind(&Core::nleft, *core);
 	std::function<void()> nr = std::bind(&Core::nright, *core);
@@ -24,7 +26,10 @@ void registerControls(Core* core, Skeleton* frame) {
 	std::function<void()> nd = std::bind(&Core::ndown, *core);
 	std::function<void()> nf = std::bind(&Core::nfront, *core);
 	std::function<void()> nb = std::bind(&Core::nback, *core);
-*/
+	*/
+
+
+
 	frame->registerFunction(l, SDL_KEYDOWN, SDL_SCANCODE_A);
 	frame->registerFunction(r, SDL_KEYDOWN, SDL_SCANCODE_D);
 	frame->registerFunction(f, SDL_KEYDOWN, SDL_SCANCODE_W);
@@ -35,6 +40,7 @@ void registerControls(Core* core, Skeleton* frame) {
 	frame->registerFunction(rotr, SDL_KEYDOWN, SDL_SCANCODE_E);
 	frame->registerFunction(rotu, SDL_KEYDOWN, SDL_SCANCODE_T);
 	frame->registerFunction(rotd, SDL_KEYDOWN, SDL_SCANCODE_G);
+	frame->registerFunction(updateMousePosition, SDL_MOUSEMOTION, SDL_SCANCODE_A);
 	/*frame->registerFunction(nl, SDL_KEYUP, SDL_SCANCODE_A);
 	frame->registerFunction(nr, SDL_KEYUP, SDL_SCANCODE_D);
 	frame->registerFunction(nf, SDL_KEYUP, SDL_SCANCODE_W);

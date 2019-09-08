@@ -82,6 +82,14 @@ void Core::init() {
 
 }
 
+
+void Core::updateMousePosition() {
+	int mousex = 0;
+	int mousey = 0;
+	SDL_GetMouseState(&mousex, &mousey);
+	camera->updateMousePosition(mousex, mousey);
+}
+
 void Core::left() {
 	camera->move(move_t::LEFT);
 }

@@ -11,6 +11,7 @@ public:
 	void update();
 	void registerControls(int aci);
 
+	void updateMousePosition();
 	void rotr();
 	void rotl();
 	void rotu();

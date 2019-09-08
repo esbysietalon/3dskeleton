@@ -14,6 +14,16 @@ Camera::~Camera()
 
 }
 
+void Camera::updateMousePosition(int x, int y) {
+	this->mousex = x;
+	this->mousey = y;
+
+	double theta_n = PI +  PI * cos(this->mousex / (double) this->viewWidth * PI);
+	double phi_n = PI +  PI * cos(this->mousey / (double) this->viewHeight *  PI);
+
+	this->theta = theta_n;
+	this->phi = phi_n;
+}
 void Camera::move(move_t id) {
 	switch (id) {
 	case move_t::ROTU:
