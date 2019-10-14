@@ -12,22 +12,11 @@ public:
 	void registerControls(int aci);
 
 	void updateMousePosition();
-	void rotr();
-	void rotl();
-	void rotu();
-	void rotd();
+	
 	void left();
 	void up();
 	void right();
 	void down();
-	void nleft();
-	void nup();
-	void nright();
-	void ndown();
-	void front();
-	void nfront();
-	void back();
-	void nback();
 private:
 	Skeleton* frame;
 	Camera* camera;

@@ -4,26 +4,25 @@
 #include <vector>
 #define PI 3.14159
 struct pos {
-	int x, y, z;
-	pos(int a, int b, int c) {
+	int x, y;
+	pos(int a, int b) {
 		x = a;
 		y = b;
-		z = c;
 	}
 	pos operator+(const pos& a) const
 	{
-		return pos(a.x + x, a.y + y, a.z + z);
+		return pos(a.x + x, a.y + y);
 	}
 };
 struct frame {
 	std::vector<pos> wf;
 };
-enum move_t { LEFT, RIGHT, UP, DOWN, FRONT, BACK, ROTL, ROTR, ROTU, ROTD };
+enum move_t { LEFT, RIGHT, UP, DOWN };
 
 class Actor {
 public:
 	Actor();
-	Actor(int x, int y, int z);
+	Actor(int x, int y);
 	~Actor();
 
 	void push(move_t index, bool act);
@@ -33,7 +32,7 @@ public:
 	void setSprite(int* pixels, int w, int h);
 
 	frame getFrame();
-	void addFramePoint(pos xyz);
+	void addFramePoint(pos xy);
 
 	int getSprite();
 	int* getPixels();

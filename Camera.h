@@ -7,7 +7,7 @@ public:
 	Camera(int width, int height);
 	~Camera();
 	void generateView(std::vector<Actor*> actors, int* pixels);
-	void setPosition(int x, int y, int z);
+	void setPosition(int x, int y);
 	void updateMousePosition(int x, int y);
 	void move(move_t id);
 private:

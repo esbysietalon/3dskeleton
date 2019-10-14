@@ -25,11 +25,9 @@ void Camera::move(move_t id) {
 	switch (id) {
 	case move_t::LEFT:
 		x-=10;
-		//theta -= PI/12;
 		break;
 	case move_t::RIGHT:
 		x+=10;
-		//theta += PI/12;
 		break;
 	case move_t::UP:
 		y-=10;
@@ -40,31 +38,9 @@ void Camera::move(move_t id) {
 	}
 }
 
-int max(pos abc) {
-	if (abc.x > abc.y) {
-		if (abc.x > abc.z) {
-			return abc.x;
-		}
-		else {
-			return abc.z;
-		}
-	}
-	else {
-		if (abc.y > abc.z) {
-			return abc.y;
-		}
-		else {
-			return abc.z;
-		}
-	}
-}
-
 bool Camera::inView(pos point) {
 	return (point.x >= 0 && point.y >= 0 && point.x < viewWidth && point.y < viewHeight);
 }
-
-
-
 
 float max(float a, float b) {
 	return (a > b) ? a : b;
@@ -79,7 +55,7 @@ float nozero(float a) {
 void Camera::colorinFrame(frame f, int* pixels) {
 	for (int i = 0; i < viewWidth; i++) {
 		for (int j = 0; j < viewHeight; j++) {
-			pixels[i + j * viewWidth] = 0x00FF00;
+			pixels[i + j * viewWidth] = 0x22FF22;
 		}
 	}
 }
@@ -96,7 +72,7 @@ void Camera::generateView(std::vector<Actor*> actors, int* pixels)
 	}
 }
 
-void Camera::setPosition(int x, int y, int z)
+void Camera::setPosition(int x, int y)
 {
 	this->x = x;
 	this->y = y;

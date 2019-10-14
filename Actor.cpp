@@ -5,12 +5,10 @@
 Actor::Actor() {
 	x = 0;
 	y = 0;
-	z = 0;
 }
-Actor::Actor(int a, int b, int c) {
+Actor::Actor(int a, int b) {
 	x = a;
 	y = b;
-	z = c;
 }
 Actor::~Actor() {
 
@@ -28,10 +26,6 @@ void Actor::move()
 	bool right = movevectors[RIGHT];
 	bool up = movevectors[UP];
 	bool down = movevectors[DOWN];
-	bool front = movevectors[FRONT];
-	bool back = movevectors[BACK];
-
-	//std::cout << "moving ";
 
 	if (left) {
 		x--;
@@ -45,12 +39,6 @@ void Actor::move()
 	if (down) {
 		y++;
 	}
-	if (front) {
-		z++;
-	}
-	if (back) {
-		z--;
-	}
 }
 
 void Actor::setSprite(int index)
@@ -62,7 +50,6 @@ void Actor::setSprite(int * texture, int w, int h)
 {
 	pixels = new int[w * h];
 	for (int i = 0; i < w * h; i++) {
-		//std::cout << texture[i] << " " << std::endl;
 		pixels[i] = texture[i];
 	}
 }
@@ -79,12 +66,12 @@ int * Actor::getPixels()
 
 pos Actor::getPos()
 {
-	return pos(x, y, z);
+	return pos(x, y);
 }
 
 frame Actor::getFrame() {
 	return skeleton;
 }
-void Actor::addFramePoint(pos xyz) {
-	skeleton.wf.emplace_back(xyz);
+void Actor::addFramePoint(pos xy) {
+	skeleton.wf.emplace_back(xy);
 }
