@@ -16,5 +16,5 @@ private:
 	int mousex, mousey;
 	int* pixels;
 	bool inView(pos point);
-	void colorinFrame(frame f, int* pixels);
+	void colorinFrame(pos* f, int len, int* pixels);
 };

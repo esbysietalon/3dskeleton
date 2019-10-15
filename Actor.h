@@ -67,6 +67,8 @@ public:
 	int* getPixels();
 
 	pos getPos();
+	void sortCW(frame f);
+	pos* getSortedFrame();
 private:
 	int sprite = -1;
 
@@ -79,5 +81,6 @@ private:
 	double theta = PI / 2;
 	int speed = 1;
 	
+	pos* sortedFrame = nullptr;
 	frame skeleton;
 };

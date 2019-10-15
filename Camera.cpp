@@ -52,14 +52,17 @@ float nozero(float a) {
 	return (a == 0) ? 1 : a;
 }
 
-
-void Camera::colorinFrame(frame f, int* pixels) {
+void Camera::colorinFrame(pos* f, int len, int* pixels) {
 	//std::cout << "COLOR IN FRAME" << std::endl;
-	for (int i = 0; i < f.wf.size(); i++) {
-		int j = (i + 1 == f.wf.size()) ? 0 : i + 1;
-		pos start = f.wf.at(i);
-		pos end = f.wf.at(j);
+	
+	
+	for (int i = 0; i < len; i++) {
+		int j = (i + 1 == len) ? 0 : i + 1;
+		pos start = f[i];
+		pos end = f[j];
 		
+
+
 		//std::cout << "i: " << i << " " << start.x << ", " << start.y << " | " << end.x << ", " << end.y << std::endl;
 
 		int x1 = start.x, x2 = end.x, y1 = start.y, y2 = end.y;
@@ -120,7 +123,7 @@ void Camera::generateView(std::vector<Actor*> actors, int* pixels)
 		pos aPos = actors.at(i)->getPos();
 		frame aframe = actors.at(i)->getFrame();
 		
-		colorinFrame(aframe, pixels);
+		colorinFrame(actors.at(i)->getSortedFrame(), aframe.wf.size(), pixels);
 	}
 }
 
