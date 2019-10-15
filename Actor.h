@@ -16,6 +16,25 @@ struct pos {
 };
 struct frame {
 	std::vector<pos> wf;
+	frame operator+(const frame& a) const {
+		frame nf = frame();
+		for (int i = 0; i < wf.size(); i++) {
+			pos np = wf.at(i);
+			if (i < a.wf.size()) {
+				np = np + a.wf.at(i);
+			}
+			nf.wf.emplace_back(np);
+		}
+		return nf;
+	}
+	frame operator+(const pos& a) const {
+		frame nf = frame();
+		for (int i = 0; i < wf.size(); i++) {
+			pos np = wf.at(i) + a;
+			nf.wf.emplace_back(np);
+		}
+		return nf;
+	}
 };
 enum move_t { LEFT, RIGHT, UP, DOWN };
 

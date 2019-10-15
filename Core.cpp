@@ -15,20 +15,7 @@ void Core::update() {
 	for (int i = 0; i < actors.size(); i++) {
 		actors.at(i)->move();
 	}
-	/*memset(pixels, 0xFFFFFF, sw * sh * sizeof(int));
-	for (int i = 0; i < actors.size(); i++) {
-		actors.at(i)->move();
 
-		int ax = actors.at(i)->getPos().x;
-		int ay = actors.at(i)->getPos().y;
-
-		int aw = actors.at(i)->getDim().x;
-		int ah = actors.at(i)->getDim().y;
-
-		for (int y = ay; y < ay + ah; y++)
-			for (int x = ax; x < ax + aw; x++)
-				pixels[x + y * sw] = actors.at(i)->getPixels()[(x-ax) + (y-ay) * aw];
-	}*/
 	frame->removeSprite(screen);
 	frame->removeTexture(screenTexture);
 	screenTexture = frame->createTexture(pixels, sw, sh);
@@ -36,11 +23,8 @@ void Core::update() {
 }
 
 void Core::init() {
-
-	
-
 	//player generation
-	actors.emplace_back(new Actor(0, 0, 0));
+	actors.emplace_back(new Actor(0, 0));
 	int player = actors.size() - 1;
 	
 	int* playerTexture = new int[100 * 100];
@@ -57,8 +41,7 @@ void Core::init() {
 	//actors.at(player)->addFramePoint(pos(-10, 10, 10));
 	//actors.at(player)->setSprite(playerTexture, 100, 100);
 	registerControls(player);
-	//end
-
+	
 	sw = frame->getScreenDim().x;
 	sh = frame->getScreenDim().y;
 	camera = new Camera(sw, sh);
@@ -85,24 +68,6 @@ void Core::left() {
 }
 void Core::right() {
 	camera->move(move_t::RIGHT);
-}
-void Core::front() {
-	camera->move(move_t::FRONT);
-}
-void Core::back() {
-	camera->move(move_t::BACK);
-}
-void Core::rotl() {
-	camera->move(move_t::ROTL);
-}
-void Core::rotr() {
-	camera->move(move_t::ROTR);
-}
-void Core::rotu() {
-	camera->move(move_t::ROTU);
-}
-void Core::rotd() {
-	camera->move(move_t::ROTD);
 }
 void Core::up() {
 	camera->move(move_t::UP);

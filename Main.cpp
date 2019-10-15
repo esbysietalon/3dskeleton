@@ -23,7 +23,7 @@ void registerControls(Core* core, Skeleton* frame) {
 }
 
 int main(int arg, char** argv) {
-	Skeleton frame(800, 600, "3D Camera Attempt");
+	Skeleton frame(800, 600, "2D Direct");
 	Core core(&frame);
 	
 	frame.addRunFunc(std::bind(&Core::update, core));

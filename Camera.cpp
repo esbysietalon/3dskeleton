@@ -68,6 +68,7 @@ void Camera::generateView(std::vector<Actor*> actors, int* pixels)
 	for (int i = 0; i < actors.size(); i++) {
 		pos aPos = actors.at(i)->getPos();
 		frame aframe = actors.at(i)->getFrame();
+
 		colorinFrame(aframe, pixels);
 	}
 }
