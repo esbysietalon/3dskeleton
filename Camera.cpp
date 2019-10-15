@@ -52,10 +52,61 @@ float nozero(float a) {
 	return (a == 0) ? 1 : a;
 }
 
+
 void Camera::colorinFrame(frame f, int* pixels) {
-	for (int i = 0; i < viewWidth; i++) {
-		for (int j = 0; j < viewHeight; j++) {
-			pixels[i + j * viewWidth] = 0x22FF22;
+	//std::cout << "COLOR IN FRAME" << std::endl;
+	for (int i = 0; i < f.wf.size(); i++) {
+		int j = (i + 1 == f.wf.size()) ? 0 : i + 1;
+		pos start = f.wf.at(i);
+		pos end = f.wf.at(j);
+		
+		//std::cout << "i: " << i << " " << start.x << ", " << start.y << " | " << end.x << ", " << end.y << std::endl;
+
+		int x1 = start.x, x2 = end.x, y1 = start.y, y2 = end.y;
+
+		float x, y, dx, dy, step;
+		int k;
+
+		dx = (x2 - x1);
+		dy = (y2 - y1);
+
+		if (dx != 0 && dy != 0) {
+			if (abs(dx) >= abs(dy))
+				step = dx;
+			else
+				step = dy;
+
+			dx = dx / step;
+			dy = dy / step;
+		}
+		else {
+			if (dx == 0 && dy != 0) {
+				step = abs(dy);
+				dy = dy / abs(dy);
+				dx = 0;
+			}
+			else if(dx != 0 && dy == 0){
+				step = abs(dx);
+				dx = dx / abs(dx);
+				dy = 0;
+			}
+			else {
+				continue;
+			}
+		}
+
+		//std::cout << "dx: " << dx << " dy: " << dy << " x1: " << x1 << " y1: " << y1 << " x2: " << x2 << " y2: " << y2 << std::endl;
+
+		x = x1;
+		y = y1;
+
+		k = 1;
+		while (k <= step)
+		{
+			pixels[(int) x + (int) y * viewWidth] = 0x22FF22;
+			x = x + dx;
+			y = y + dy;
+			k = k + 1;
 		}
 	}
 }
@@ -68,7 +119,7 @@ void Camera::generateView(std::vector<Actor*> actors, int* pixels)
 	for (int i = 0; i < actors.size(); i++) {
 		pos aPos = actors.at(i)->getPos();
 		frame aframe = actors.at(i)->getFrame();
-
+		
 		colorinFrame(aframe, pixels);
 	}
 }

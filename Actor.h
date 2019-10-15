@@ -2,9 +2,15 @@
 
 #include <math.h>
 #include <vector>
+#include <algorithm>
+#include <functional>
 #define PI 3.14159
 struct pos {
 	int x, y;
+	pos() {
+		x = 0;
+		y = 0;
+	}
 	pos(int a, int b) {
 		x = a;
 		y = b;
@@ -12,6 +18,10 @@ struct pos {
 	pos operator+(const pos& a) const
 	{
 		return pos(a.x + x, a.y + y);
+	}
+	pos operator/(const float a) const
+	{
+		return pos(x / a, y / a);
 	}
 };
 struct frame {

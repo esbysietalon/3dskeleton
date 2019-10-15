@@ -31,15 +31,13 @@ void Core::init() {
 	for (int i = 0; i < 100 * 100; i++) {
 		playerTexture[i] = 0x2222FF;
 	}
-	//actors.at(player)->addFramePoint(pos(-10, -10, -10));
-	//actors.at(player)->addFramePoint(pos(10, 10, 10));
-	//actors.at(player)->addFramePoint(pos(10, -10, -10));
-	//actors.at(player)->addFramePoint(pos(10, -10, 10));
-	//actors.at(player)->addFramePoint(pos(10, 10, -10));
-	//actors.at(player)->addFramePoint(pos(-10, -10, 10));
+
+	actors.at(player)->addFramePoint(pos(20, 20));
+	actors.at(player)->addFramePoint(pos(10, 20));
+	actors.at(player)->addFramePoint(pos(20, 10));
+	actors.at(player)->addFramePoint(pos(10, 10));
 	
-	//actors.at(player)->addFramePoint(pos(-10, 10, 10));
-	//actors.at(player)->setSprite(playerTexture, 100, 100);
+
 	registerControls(player);
 	
 	sw = frame->getScreenDim().x;
@@ -51,8 +49,6 @@ void Core::init() {
 
 	screenTexture = frame->createTexture(pixels, sw, sh);
 	screen = frame->createSprite(screenTexture, 0, 0);
-	
-
 }
 
 
