@@ -122,7 +122,7 @@ void Actor::sortCW(frame f) {
 	this->sortedFrame = new pos[f.wf.size()];
 	for (int i = 0; i < f.wf.size(); i++) {
 		this->sortedFrame[i] = f.wf.at(i);
-		//printf("i: %d (%d, %d)\n", i, f.wf.at(i).x, f.wf.at(i).y);
+		printf("i: %d (%d, %d)\n", i, f.wf.at(i).x, f.wf.at(i).y);
 	}
 	
 }

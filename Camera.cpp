@@ -52,6 +52,28 @@ float nozero(float a) {
 	return (a == 0) ? 1 : a;
 }
 
+pos findEdgeIndex(pos* f, int len, int vw, int type) {
+	int edgeX = f[0].x;
+	int edgeY = f[0].y;
+	for (int i = 0; i < len; i++) {
+		if ((edgeX - f[i].x) * type > 0) {
+			edgeX = f[i].x;
+		}
+		if ((edgeY - f[i].y) * type > 0) {
+			edgeY = f[i].y;
+		}
+	}
+	return pos(edgeX, edgeY);
+}
+int isVertex(pos* f, int len, pos point) {
+	for (int i = 0; i < len; i++) {
+		if (point.x == f[i].x && point.y == f[i].y) {
+			//printf("%d: (%d, %d) is (%d, %d)\n", i, point.x, point.y, f[i].x, f[i].y);
+			return i;
+		}
+	}
+	return -1;
+}
 void Camera::colorinFrame(pos* f, int len, int* pixels) {
 	//std::cout << "COLOR IN FRAME" << std::endl;
 	
@@ -73,11 +95,13 @@ void Camera::colorinFrame(pos* f, int len, int* pixels) {
 		dx = (x2 - x1);
 		dy = (y2 - y1);
 
+		//printf("dx %f dy %f\n", dx, dy);
+
 		if (dx != 0 && dy != 0) {
 			if (abs(dx) >= abs(dy))
-				step = dx;
+				step = abs(dx);
 			else
-				step = dy;
+				step = abs(dy);
 
 			dx = dx / step;
 			dy = dy / step;
@@ -106,10 +130,68 @@ void Camera::colorinFrame(pos* f, int len, int* pixels) {
 		k = 1;
 		while (k <= step)
 		{
-			pixels[(int) x + (int) y * viewWidth] = 0x22FF22;
+			pixels[(int) x + (int) y * viewWidth] = -1;
 			x = x + dx;
 			y = y + dy;
 			k = k + 1;
+		}
+	}
+
+	pos initialPoint = findEdgeIndex(f, len, viewWidth, 1);
+	pos endPoint = findEdgeIndex(f, len, viewWidth, -1);
+	bool brushOn = false;
+	printf("initialPoint is (%d, %d); endPoint is (%d, %d)\n", initialPoint.x, initialPoint.y, endPoint.x, endPoint.y);
+	for (int y = initialPoint.y; y <= endPoint.y; y++) {
+		for (int x = initialPoint.x; x != endPoint.x; x++) {
+			int vertex = isVertex(f, len, pos(x, y));
+			//printf("vertex %d\n", vertex);
+			if (vertex >= 0) {
+				//printf("%d %d isVertex\n", x, y);
+				if (f[(vertex + 1) % len].y == f[vertex].y) {
+					//printf("flatline\n");
+					if (pixels[x + y * viewWidth] < 0) {
+						//printf("0\n");
+						brushOn = !brushOn;
+						pixels[x + y * viewWidth] = 0x22FF22;
+						//printf("x is %d and y is %d and brush is %d\n", x, y, brushOn);
+					}else if (brushOn) {
+						//printf("1\n"); {
+						pixels[x + y * viewWidth] = 0x22FF22;
+					}
+				}
+				else {
+					//printf("2\n");
+					pixels[x + y * viewWidth] = 0x22FF22;
+					brushOn = false;
+				}
+			}
+			else {
+				//printf("isNotVertex");
+				if (pixels[x + y * viewWidth] == -1) {
+					//printf("3\n");
+					brushOn = !brushOn;
+					pixels[x + y * viewWidth] = 0x22FF22;
+				}
+				if (brushOn) {
+					//printf("4\n");
+					pixels[x + y * viewWidth] = 0x22FF22;
+				}
+				
+			}
+			/*if (isVertex(f, len, pos(x, y))) {
+				//printf("isVertex");
+				pixels[x + y * viewWidth] = 0x22FF22;
+			}
+			else {
+				//printf("isNotVertex");
+				if (pixels[x + y * viewWidth] == -1) {
+					brushOn = !brushOn;
+					pixels[x + y * viewWidth] = 0x22FF22;
+				}
+				if (brushOn) {
+					pixels[x + y * viewWidth] = 0x22FF22;
+				}
+			}*/
 		}
 	}
 }
@@ -117,7 +199,7 @@ void Camera::colorinFrame(pos* f, int len, int* pixels) {
 void Camera::generateView(std::vector<Actor*> actors, int* pixels)
 {
 	for(int i = 0; i < viewWidth * viewHeight; i++){
-		pixels[i] = 0;
+		pixels[i] = 0xFFFFFF;
 	}
 	for (int i = 0; i < actors.size(); i++) {
 		pos aPos = actors.at(i)->getPos();
