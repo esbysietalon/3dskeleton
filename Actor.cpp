@@ -72,6 +72,7 @@ pos Actor::getPos()
 frame Actor::getFrame() {
 	return skeleton;
 }
+
 void Actor::sortCW(frame f) {
 	pos start = f.wf.at(0);
 	pos center = pos();
@@ -80,6 +81,8 @@ void Actor::sortCW(frame f) {
 	}
 	center = center / (float)f.wf.size();
 	//std::cout << " center x : " << center.x << " center y : " << center.y << " start x : " << start.x << " start y : " << start.y << std::endl;
+	f.center = center;
+	
 	float ang_sc = atan2((float)(start.y - center.y), (float)(start.x - center.x));
 	if (ang_sc < 0) {
 		ang_sc += 2 * PI;

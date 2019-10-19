@@ -74,6 +74,19 @@ int isVertex(pos* f, int len, pos point) {
 	}
 	return -1;
 }
+bool isExtension(pos* f, int len, int index) {
+	int maxY = f[0].y;
+	int minY = f[0].y;
+	for (int i = 0; i < len; i++) {
+		if (f[i].y < minY) {
+			minY = f[i].y;
+		}
+		if (f[i].y > maxY) {
+			maxY = f[i].y;
+		}
+	}
+	return !(f[index].y > minY && f[index].y < maxY);
+}
 void Camera::colorinFrame(pos* f, int len, int* pixels) {
 	//std::cout << "COLOR IN FRAME" << std::endl;
 	
@@ -140,34 +153,68 @@ void Camera::colorinFrame(pos* f, int len, int* pixels) {
 	pos initialPoint = findEdgeIndex(f, len, viewWidth, 1);
 	pos endPoint = findEdgeIndex(f, len, viewWidth, -1);
 	bool brushOn = false;
-	printf("initialPoint is (%d, %d); endPoint is (%d, %d)\n", initialPoint.x, initialPoint.y, endPoint.x, endPoint.y);
+	int lastvertex = -1;
+	//printf("initialPoint is (%d, %d); endPoint is (%d, %d)\n", initialPoint.x, initialPoint.y, endPoint.x, endPoint.y);
 	for (int y = initialPoint.y; y <= endPoint.y; y++) {
-		for (int x = initialPoint.x; x != endPoint.x; x++) {
-			int vertex = isVertex(f, len, pos(x, y));
-			//printf("vertex %d\n", vertex);
-			if (vertex >= 0) {
-				//printf("%d %d isVertex\n", x, y);
-				if (f[(vertex + 1) % len].y == f[vertex].y) {
-					//printf("flatline\n");
-					if (pixels[x + y * viewWidth] < 0) {
-						//printf("0\n");
-						brushOn = !brushOn;
-						pixels[x + y * viewWidth] = 0x22FF22;
-						//printf("x is %d and y is %d and brush is %d\n", x, y, brushOn);
-					}else if (brushOn) {
-						//printf("1\n"); {
-						pixels[x + y * viewWidth] = 0x22FF22;
+		brushOn = false;
+		bool foundExtension = false;
+		for (int x = initialPoint.x; x <= endPoint.x; x++) {
+			if (x + y * viewWidth >= viewWidth * viewHeight)
+				continue;
+			if (pixels[x + y * viewWidth] < 0) {
+				int vertex = isVertex(f, len, pos(x, y));
+				if (vertex >= 0) {
+					if (isExtension(f, len, vertex)) {
+						brushOn = false;
+						foundExtension = true;
+					}else {
+						if (x < viewWidth - 1 && pixels[(x + 1) + y * viewWidth] >= 0) {
+							brushOn = !brushOn;
+						}
 					}
 				}
 				else {
-					//printf("2\n");
-					pixels[x + y * viewWidth] = 0x22FF22;
-					brushOn = false;
+					if (!foundExtension)
+						if (x < viewWidth - 1 && pixels[(x + 1) + y * viewWidth] >= 0)
+							brushOn = !brushOn;
 				}
+				pixels[x + y * viewWidth] = 0x22FF22;
+			}
+			else {
+				if (brushOn) {
+					pixels[x + y * viewWidth] = 0xFF2222;
+				}
+			}
+			/*
+			//printf("vertex %d\n", vertex);
+			if (vertex >= 0) {
+				//printf("%d %d isVertex\n", x, y);
+				//if (f[(vertex + 1) % len].y == f[vertex].y) {
+					//printf("flatline\n");
+					//if (pixels[x + y * viewWidth] < 0) {
+						//printf("0\n");
+						//brushOn = !brushOn;
+						//pixels[x + y * viewWidth] = 0x22FF22;
+						//printf("x is %d and y is %d and brush is %d\n", x, y, brushOn);
+					//}else if (brushOn) {
+						//printf("1\n"); {
+						//pixels[x + y * viewWidth] = 0x22FF22;
+					//}
+				//}
+				//else {
+					//printf("2\n");
+					//if (pixels[x + y * viewWidth] < 0) {
+						pixels[x + y * viewWidth] = 0x22FF22;
+						brushOn = true;
+						//brushOn = !brushOn;
+					//}
+						
+					//brushOn = false;
+				//}
 			}
 			else {
 				//printf("isNotVertex");
-				if (pixels[x + y * viewWidth] == -1) {
+				if (pixels[x + y * viewWidth] < 0) {
 					//printf("3\n");
 					brushOn = !brushOn;
 					pixels[x + y * viewWidth] = 0x22FF22;
@@ -177,7 +224,7 @@ void Camera::colorinFrame(pos* f, int len, int* pixels) {
 					pixels[x + y * viewWidth] = 0x22FF22;
 				}
 				
-			}
+			}*/
 			/*if (isVertex(f, len, pos(x, y))) {
 				//printf("isVertex");
 				pixels[x + y * viewWidth] = 0x22FF22;
@@ -199,7 +246,7 @@ void Camera::colorinFrame(pos* f, int len, int* pixels) {
 void Camera::generateView(std::vector<Actor*> actors, int* pixels)
 {
 	for(int i = 0; i < viewWidth * viewHeight; i++){
-		pixels[i] = 0xFFFFFF;
+		pixels[i] = 0;
 	}
 	for (int i = 0; i < actors.size(); i++) {
 		pos aPos = actors.at(i)->getPos();

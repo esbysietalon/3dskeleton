@@ -26,6 +26,7 @@ struct pos {
 };
 struct frame {
 	std::vector<pos> wf;
+	pos center;
 	frame operator+(const frame& a) const {
 		frame nf = frame();
 		for (int i = 0; i < wf.size(); i++) {

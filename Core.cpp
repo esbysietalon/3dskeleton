@@ -32,12 +32,12 @@ void Core::init() {
 		playerTexture[i] = 0x2222FF;
 	}
 
-	actors.at(player)->addFramePoint(pos(400, 400));
-	actors.at(player)->addFramePoint(pos(200, 400));
+	actors.at(player)->addFramePoint(pos(100, 400));
+	actors.at(player)->addFramePoint(pos(200, 600));
 	actors.at(player)->addFramePoint(pos(600, 300));
-	actors.at(player)->addFramePoint(pos(600, 100));
-	actors.at(player)->addFramePoint(pos(400, 200));
-	actors.at(player)->addFramePoint(pos(200, 200));
+	actors.at(player)->addFramePoint(pos(250, 100));
+	//actors.at(player)->addFramePoint(pos(400, 200));
+	actors.at(player)->addFramePoint(pos(400, 400));
 	
 
 	registerControls(player);
