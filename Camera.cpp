@@ -74,8 +74,8 @@ int isVertex(pos* f, int len, pos point) {
 	}
 	return -1;
 }
-bool isExtension(pos* f, int len, int index) {
-	int maxY = f[0].y;
+int isLocalExtrema(pos* f, int len, int index) {
+	/*int maxY = f[0].y;
 	int minY = f[0].y;
 	for (int i = 0; i < len; i++) {
 		if (f[i].y < minY) {
@@ -85,7 +85,37 @@ bool isExtension(pos* f, int len, int index) {
 			maxY = f[i].y;
 		}
 	}
-	return !(f[index].y > minY && f[index].y < maxY);
+	return !(f[index].y > minY && f[index].y < maxY);*/
+	int prev = index - 1;
+	if (prev < 0)
+		prev += len;
+	int next = (index + 1) % len;
+	if (f[index].y > f[prev].y && f[index].y > f[next].y)
+		return 1;
+	if (f[index].y < f[prev].y && f[index].y < f[next].y)
+		return -1;
+	return 0;
+}
+int lookAhead(int* pixels, int x, int y, int end, int vw, pos* vertices, int vertlen) {
+	int edges = 0;
+	bool newEdge = true;
+	for (int ix = x + 1; ix <= end; ix++) {
+		/**/
+		if (pixels[ix + y * vw] < 0) {
+			if (int v = isVertex(vertices, vertlen, pos(ix, y)) >= 0) {
+				if (isLocalExtrema(vertices, vertlen, v))
+					continue;
+			}
+			if (newEdge){
+				edges++;
+				newEdge = false;
+			}
+		}
+		else {
+			newEdge = true;
+		}
+	}
+	return edges;
 }
 void Camera::colorinFrame(pos* f, int len, int* pixels) {
 	//std::cout << "COLOR IN FRAME" << std::endl;
@@ -150,39 +180,64 @@ void Camera::colorinFrame(pos* f, int len, int* pixels) {
 		}
 	}
 
+
+	//odd-even/scanline method
 	pos initialPoint = findEdgeIndex(f, len, viewWidth, 1);
 	pos endPoint = findEdgeIndex(f, len, viewWidth, -1);
-	bool brushOn = false;
-	int lastvertex = -1;
+	//bool brushOn = false;
+	int prevEdges = 0;
 	//printf("initialPoint is (%d, %d); endPoint is (%d, %d)\n", initialPoint.x, initialPoint.y, endPoint.x, endPoint.y);
 	for (int y = initialPoint.y; y <= endPoint.y; y++) {
-		brushOn = false;
-		bool foundExtension = false;
+		//brushOn = false;
+		prevEdges = 0;
+		bool foundExtrema = false;
 		for (int x = initialPoint.x; x <= endPoint.x; x++) {
 			if (x + y * viewWidth >= viewWidth * viewHeight)
 				continue;
 			if (pixels[x + y * viewWidth] < 0) {
 				int vertex = isVertex(f, len, pos(x, y));
 				if (vertex >= 0) {
-					if (isExtension(f, len, vertex)) {
-						brushOn = false;
-						foundExtension = true;
-					}else {
+					if (isLocalExtrema(f, len, vertex) != 0) {
+						//brushOn = false;
+						foundExtrema = true;
+						//prevEdges++;
+					}
+					if(!foundExtrema){
 						if (x < viewWidth - 1 && pixels[(x + 1) + y * viewWidth] >= 0) {
-							brushOn = !brushOn;
+							prevEdges++;
+							//brushOn = !brushOn;
 						}
 					}
+				}else {
+					//if (!foundExtension)
+					
+					if (x < viewWidth - 1 && pixels[(x + 1) + y * viewWidth] >= 0)
+						prevEdges++;
+							//brushOn = !brushOn;
+				}
+				
+				/*if (prevEdges % 2 == 1) {
+					if(!lookAhead(pixels, x, y, endPoint.x, viewWidth))
+						prevEdges--;
 				}
 				else {
-					if (!foundExtension)
-						if (x < viewWidth - 1 && pixels[(x + 1) + y * viewWidth] >= 0)
-							brushOn = !brushOn;
-				}
+					//if (lookAhead(pixels, x, y, endPoint.x, viewWidth))
+					//	prevEdges++;
+				}*/
 				pixels[x + y * viewWidth] = 0x22FF22;
 			}
 			else {
-				if (brushOn) {
-					pixels[x + y * viewWidth] = 0xFF2222;
+				if (foundExtrema)
+					foundExtrema = false;
+				int forwardEdges = lookAhead(pixels, x, y, endPoint.x, viewWidth, f, len);
+				if (forwardEdges > 0 && prevEdges > 0) {
+					if (prevEdges % 2 == 1) {
+						pixels[x + y * viewWidth] = 0xFF2222;
+					}
+					else {
+						if (forwardEdges % 2 != 0)
+							pixels[x + y * viewWidth] = 0xFF2222;
+					}
 				}
 			}
 			/*

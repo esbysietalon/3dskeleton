@@ -2,6 +2,8 @@
 #include "Skeleton.h"
 #include "Actor.h"
 #include "Camera.h"
+#include <random>
+
 
 class Core {
 public:
@@ -17,6 +19,8 @@ public:
 	void up();
 	void right();
 	void down();
+
+	double rand();
 private:
 	Skeleton* frame;
 	Camera* camera;
@@ -26,6 +30,8 @@ private:
 	std::vector<int> sprites;
 	std::vector<Actor*> actors;
 	std::vector<int> controlled;
+
+	std::mt19937* rng;
 
 	int* pixels;
 	int sw, sh;

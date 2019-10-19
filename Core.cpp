@@ -21,9 +21,16 @@ void Core::update() {
 	screenTexture = frame->createTexture(pixels, sw, sh);
 	screen = frame->createSprite(screenTexture, 0, 0);
 }
+double Core::rand() {
+	std::uniform_real_distribution<double> dist(0, 1);
 
+	return dist(*rng);
+}
 void Core::init() {
 	//player generation
+	rng = new std::mt19937(std::random_device()());
+	
+
 	actors.emplace_back(new Actor(0, 0));
 	int player = actors.size() - 1;
 	
@@ -32,18 +39,21 @@ void Core::init() {
 		playerTexture[i] = 0x2222FF;
 	}
 
-	actors.at(player)->addFramePoint(pos(100, 400));
-	actors.at(player)->addFramePoint(pos(200, 600));
-	actors.at(player)->addFramePoint(pos(600, 300));
-	actors.at(player)->addFramePoint(pos(250, 100));
-	//actors.at(player)->addFramePoint(pos(400, 200));
-	actors.at(player)->addFramePoint(pos(400, 400));
+	int points = 3 + (int)(10 * rand());
 	
+
+	sw = frame->getScreenDim().x;
+	sh = frame->getScreenDim().y;
+	
+	for (int i = 0; i < points; i++) {
+		int rx = (int)(sw * rand());
+		int ry = (int)(sh * rand());
+		actors.at(player)->addFramePoint(pos(rx, ry));
+	}	
 
 	registerControls(player);
 	
-	sw = frame->getScreenDim().x;
-	sh = frame->getScreenDim().y;
+	
 	camera = new Camera(sw, sh);
 	pixels = new int[sw * sh];
 
